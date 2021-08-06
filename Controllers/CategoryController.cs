@@ -6,8 +6,8 @@ public class CategoryController : ControllerBase
     // https://localhost:5001/categories
 
     [HttpGet]
-    [Route("")]
-    public string Get()
+    [Route("{id:int}")]
+    public string GetById(int id)
     {
         return "GET";
     }
