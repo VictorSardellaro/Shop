@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Backoffice.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Backoffice.Data;
+using Microsoft.AspNetCore.Authorization;
+using System;
 
 [Route("categories")]
 public class CategoryController : ControllerBase
@@ -24,12 +27,27 @@ public class CategoryController : ControllerBase
 
     [HttpPost]
     [Route("")]
-    public async Task<ActionResult<List<Category>>> Post([FromBody] Category model)
+    // [Authorize(Roles = "employee")]
+    [AllowAnonymous]
+    public async Task<ActionResult<Category>> Post(
+            [FromServices] DataContext context,
+            [FromBody] Category model)
     {
+        // Verifica se os dados são válidos
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        return Ok(model);
+        try
+        {
+            context.Categories.Add(model);
+            await context.SaveChangesAsync();
+            return model;
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Não foi possível criar a categoria" });
+
+        }
     }
 
     [HttpPut]
