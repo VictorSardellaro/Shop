@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Backoffice.Data;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 [Route("categories")]
 public class CategoryController : ControllerBase
@@ -52,7 +53,11 @@ public class CategoryController : ControllerBase
 
     [HttpPut]
     [Route("{id:int}")]
-    public async Task<ActionResult<List<Category>>> Put(int id, [FromBody] Category model)
+    [Authorize(Roles = "employee")]
+    public async Task<ActionResult<Category>> Put(
+            [FromServices] DataContext context,
+            int id,
+            [FromBody] Category model)
     {
         // Verifica se o ID informado é o mesmo do modelo
         if (id != model.Id)
@@ -62,8 +67,17 @@ public class CategoryController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        return NotFound();
+        try
+        {
+            context.Entry<Category>(model).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return model;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return BadRequest(new { message = "Não foi possível atualizar a categoria" });
 
+        }
     }
 
     [HttpDelete]
