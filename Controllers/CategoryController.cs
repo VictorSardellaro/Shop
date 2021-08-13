@@ -82,9 +82,26 @@ public class CategoryController : ControllerBase
 
     [HttpDelete]
     [Route("{id:int}")]
-    public async Task<ActionResult<List<Category>>> Delete()
+    [Authorize(Roles = "employee")]
+    public async Task<ActionResult<Category>> Delete(
+            [FromServices] DataContext context,
+            int id)
     {
-        return Ok();
+        var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        if (category == null)
+            return NotFound(new { message = "Categoria não encontrada" });
+
+        try
+        {
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
+            return category;
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Não foi possível remover a categoria" });
+
+        }
     }
 
 }
