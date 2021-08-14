@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Backoffice.Models;
+using Shop.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Backoffice.Data;
+using Shop.Data;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.EntityFrameworkCore;
@@ -14,22 +14,18 @@ public class CategoryController : ControllerBase
 
     [HttpGet]
     [Route("")]
-    [AllowAnonymous]
-    [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
-    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
+    public async Task<ActionResult<List<Category>>> Get(
+        [FromServices] DataContext context)
     {
         var categories = await context.Categories.AsNoTracking().ToListAsync();
-        return categories;
+        return OK(categories);
     }
 
     [HttpGet]
     [Route("{id:int}")]
-    [AllowAnonymous]
-    public async Task<ActionResult<Category>> GetById([FromServices] DataContext context, int id)
+    public async Task<ActionResult<Category>> GetById()
     {
-        var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        return category;
+        return new Category();
     }
 
     [HttpPost]

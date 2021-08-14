@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Backoffice.Data;
-using Backoffice.Models;
+using Shop.Data;
+using Shop.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Backoffice.Controllers
