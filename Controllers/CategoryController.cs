@@ -14,18 +14,22 @@ public class CategoryController : ControllerBase
 
     [HttpGet]
     [Route("")]
-    public async Task<ActionResult<List<Category>>> Get(
-        [FromServices] DataContext context)
+    [AllowAnonymous]
+    [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
+    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
     {
         var categories = await context.Categories.AsNoTracking().ToListAsync();
-        return OK(categories);
+        return categories;
     }
 
     [HttpGet]
     [Route("{id:int}")]
-    public async Task<ActionResult<Category>> GetById()
+    [AllowAnonymous]
+    public async Task<ActionResult<Category>> GetById([FromServices] DataContext context, int id)
     {
-        return new Category();
+        var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return category;
     }
 
     [HttpPost]
