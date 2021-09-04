@@ -7,7 +7,7 @@ using Shop.Data;
 using Shop.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Backoffice.Controllers
+namespace Shop.Controllers
 {
     [Route("v1/products")]
     public class ProductController : Controller
